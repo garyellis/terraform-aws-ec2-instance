@@ -27,7 +27,7 @@ resource "aws_instance" "instance_with_user_data" {
   disable_api_termination     = "${var.disable_api_termination}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${local.key_pair_name}"
-  subnet_id                   = "${var.subnet_id}"
+  subnet_id                   = "${element(var.subnet_ids, count.index)}"
   vpc_security_group_ids      = ["${var.security_group_attachments}"]
 
   user_data                   = "${var.user_data}"
@@ -43,7 +43,7 @@ resource "aws_instance" "instance_with_user_data_base64" {
   disable_api_termination     = "${var.disable_api_termination}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
-  subnet_id                   = "${var.subnet_id}"
+  subnet_id                   = "${element(var.subnet_ids, count.index)}"
   vpc_security_group_ids      = ["${var.security_group_attachments}"]
 
   user_data_base64            = "${var.user_data_base64}"

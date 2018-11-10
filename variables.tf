@@ -50,8 +50,9 @@ variable "security_group_attachments" {
   type = "list"
 }
 
-variable "subnet_id" {
-  description = "the vpc subnet id"
+variable "subnet_ids" {
+  description = "A list of subnet ids"
+  type = "list"
 }
 
 variable "tags" {
