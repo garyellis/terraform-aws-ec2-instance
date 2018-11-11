@@ -23,11 +23,15 @@ variable "disable_api_termination" {
   default = "false"
 }
 
+variable "iam_instance_profile" {
+  description = "the ec2 instance profile"
+  default = ""
+}
+
 variable "instance_type" {
   description = "the aws instance type"
   default = "t2.medium"
 }
-
 
 variable "key_name" {
   description = "assign a keypair to the ec2 instance. Overrides the default keypair name when var.key_public_key_material and var.key_name are set"
@@ -48,6 +52,11 @@ variable "security_group_attachments" {
   description = "a list of security group ids that will attach to rancher server"
   default = []
   type = "list"
+}
+
+variable "source_dest_check" {
+  description = "source dest checking enabled"
+  default = "true"
 }
 
 variable "subnet_ids" {

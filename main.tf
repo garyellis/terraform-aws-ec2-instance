@@ -25,8 +25,10 @@ resource "aws_instance" "instance_with_user_data" {
   ami                         = "${var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   disable_api_termination     = "${var.disable_api_termination}"
+  iam_instance_profile        = "${var.iam_instance_profile}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${local.key_pair_name}"
+  source_dest_check           = "${var.source_dest_check}"
   subnet_id                   = "${element(var.subnet_ids, count.index)}"
   vpc_security_group_ids      = ["${var.security_group_attachments}"]
 
@@ -41,8 +43,10 @@ resource "aws_instance" "instance_with_user_data_base64" {
   ami                         = "${var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   disable_api_termination     = "${var.disable_api_termination}"
+  iam_instance_profile        = "${var.iam_instance_profile}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
+  source_dest_check           = "${var.source_dest_check}"
   subnet_id                   = "${element(var.subnet_ids, count.index)}"
   vpc_security_group_ids      = ["${var.security_group_attachments}"]
 
