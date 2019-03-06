@@ -8,6 +8,11 @@ variable "ami_name" {
   default = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server*"
 }
 
+variable "ami_owners" {
+  description = "the ami owner. (is a required arg for aws_ami datasource"
+  type = "list"
+}
+
 variable "associate_public_ip_address" {
   description = "Associate public ip address when subnet_id is attached to an igw"
   default = "true"

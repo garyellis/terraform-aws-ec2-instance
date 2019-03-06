@@ -1,5 +1,6 @@
 data "aws_ami" "ami" {
   most_recent = true
+  owners = ["${var.ami_owners}"]
   filter {
     name = "name"
     values = ["${var.ami_name}"]
