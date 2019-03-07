@@ -11,6 +11,7 @@ variable "ami_name" {
 variable "ami_owners" {
   description = "the ami owner. (is a required arg for aws_ami datasource"
   type = "list"
+  default = ["679593333241"]
 }
 
 variable "associate_public_ip_address" {
