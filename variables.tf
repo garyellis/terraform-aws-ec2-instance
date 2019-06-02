@@ -34,6 +34,11 @@ variable "iam_instance_profile" {
   default = ""
 }
 
+variable "instance_auto_recovery_enabled" {
+  description = "enable instance recovery cloudwatch alarm"
+  default = "0"
+}
+
 variable "instance_type" {
   description = "the aws instance type"
   default = "t2.medium"
@@ -52,6 +57,12 @@ variable "key_public_key_material" {
 variable "name" {
   description = "the resources name"
   default = "rancher-server"
+}
+
+variable "root_block_device" {
+  description = "customize the root block device configuration"
+  type = "list"
+  default = []
 }
 
 variable "security_group_attachments" {
