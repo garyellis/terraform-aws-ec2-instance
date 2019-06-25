@@ -98,7 +98,7 @@ module "instance_custom_root_device" {
   associate_public_ip_address = "false"
   instance_type               = "t2.nano"
   key_name                    = var.key_name
-  name                        = format("%s-custom-root-device", var.name)
+  name                        = format("%s-custom-root", var.name)
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
@@ -181,7 +181,7 @@ module "instance_userdata_base64_custom_root_device" {
   associate_public_ip_address = "false"
   instance_type               = "t2.nano"
   key_name                    = var.key_name
-  name                        = format("%s-custom-root-device", var.name)
+  name                        = format("%s-custom-root", var.name)
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
@@ -200,7 +200,7 @@ module "instance_userdata_base64_autorecovery_custom_root_device" {
   associate_public_ip_address = "false"
   instance_type               = "t2.nano"
   key_name                    = var.key_name
-  name                        = format("%s-userdatab64-autorecovery-custom-root-device", var.name)
+  name                        = format("%s-userdatab64-autorecovery-custom-root", var.name)
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
@@ -215,27 +215,7 @@ module "instance_userdata_base64_autorecovery_custom_root_device" {
 }
 
 
-
-
-
-# outputs validation
-#output "aws_instance_ids" {
-#  value = concat(module.instance.aws_instance_ids, module.instance_with_custom_root_block_device.aws_instance_ids)
-#}
-
-#output "aws_instance_private_ips" {
-#  value = concat(module.instance.aws_instance_private_ips, module.instance_with_custom_root_block_device.aws_instance_private_ips)
-#}
-
-#output "aws_instance_public_ips" {
-#  value = concat(module.instance.aws_instance_public_ips, module.instance_with_custom_root_block_device.aws_instance_public_ips)
-#}
-
-#output "aws_instance_public_ip" {
-#  value = concat(module.instance.aws_instance_public_ips, module.instance_with_custom_root_block_device.aws_instance_public_ips)
-#}
-
-
+# outputs
 # instance ids
 output "aws_instance_ids" {
   value = concat(
