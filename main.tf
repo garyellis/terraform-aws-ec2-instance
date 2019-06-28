@@ -105,7 +105,7 @@ resource "aws_cloudwatch_metric_alarm" "instance_auto_recovery" {
   namespace                   = "AWS/EC2"
   alarm_description           = "EC2 instance auto recovery"
   alarm_actions               = [format("arn:aws:automate:%s:ec2:recover",data.aws_region.region.name)]
-  evaluation_periods          = "2"
+  evaluation_periods          = "5"
   period                      = "60"
   statistic                   = "Minimum"
   comparison_operator         = "GreaterThanThreshold"

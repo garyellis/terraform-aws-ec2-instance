@@ -18,8 +18,8 @@ variable "ami_owners" {
 
 variable "associate_public_ip_address" {
   description = "Associate public ip address when subnet_id is attached to an igw"
-  type = string
-  default = "true"
+  type = bool
+  default = true
 }
 
 variable "count_instances" {
@@ -30,8 +30,8 @@ variable "count_instances" {
 
 variable "disable_api_termination" {
   description = "protect from accidental ec2 instance termination"
-  type = string
-  default = "false"
+  type = bool
+  default = false
 }
 
 variable "iam_instance_profile" {
@@ -67,7 +67,6 @@ variable "key_public_key_material" {
 variable "name" {
   description = "the resources name"
   type = string
-  default = "rancher-server"
 }
 
 variable "root_block_device" {
@@ -84,8 +83,8 @@ variable "security_group_attachments" {
 
 variable "source_dest_check" {
   description = "source dest checking enabled"
-  type = string
-  default = "true"
+  type = bool
+  default = true
 }
 
 variable "subnet_ids" {

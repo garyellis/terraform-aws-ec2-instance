@@ -31,6 +31,16 @@ variable "input_user_data" {
 }
 
 
+module "userdata_docker" {
+  source = "github.com/garyellis/tf_module_cloud_init"
+
+  base64_encode          = false
+  gzip                   = false
+  install_docker         = true
+  install_docker_compose = true
+}
+
+
 module "sg" {
   source = "github.com/garyellis/tf_module_aws_security_group"
 
@@ -50,7 +60,7 @@ module "sg" {
 
 module "instance_empty" {
   source = "../"
-  count_instances             = "0"
+  count_instances             = 0
   ami_name                    = var.ami_name
   associate_public_ip_address = "false"
   instance_type               = "t2.nano"
@@ -66,21 +76,21 @@ module "instance" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = var.name
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
-  user_data                   = var.input_user_data
+  user_data                   = module.userdata_docker.cloudinit_userdata
 }
 
 module "instance_autorecovery" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-autorecovery", var.name)
@@ -95,14 +105,14 @@ module "instance_custom_root_device" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-custom-root", var.name)
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
-  user_data                   = var.input_user_data
+  user_data                   = module.userdata_docker.cloudinit_userdata
   root_block_device = [{
    delete_on_termination = "true"
    volume_type = "gp2"
@@ -114,14 +124,14 @@ module "instance_autorecovery_custom_root_device" {
   source = "../"
   count_instances             = 2
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-autorecovery-custom-root", var.name)
   security_group_attachments  = [module.sg.security_group_id]
   subnet_ids                  = var.subnets
   tags                        = var.tags
-  user_data                   = var.input_user_data
+  user_data                   = module.userdata_docker.cloudinit_userdata
   root_block_device = [{
    delete_on_termination = "true"
    volume_type = "gp2"
@@ -134,7 +144,7 @@ module "instance_userdata_base64_empty" {
   source = "../"
   count_instances             = 0
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = var.name
@@ -149,7 +159,7 @@ module "instance_userdata_base64" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-userdatab64", var.name)
@@ -163,7 +173,7 @@ module "instance_userdata_base64_autorecovery" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-userdatab64-autorecovery", var.name)
@@ -178,7 +188,7 @@ module "instance_userdata_base64_custom_root_device" {
   source = "../"
   count_instances             = 1
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-custom-root", var.name)
@@ -197,7 +207,7 @@ module "instance_userdata_base64_autorecovery_custom_root_device" {
   source = "../"
   count_instances             = 2
   ami_name                    = var.ami_name
-  associate_public_ip_address = "false"
+  associate_public_ip_address = false
   instance_type               = "t2.nano"
   key_name                    = var.key_name
   name                        = format("%s-userdatab64-autorecovery-custom-root", var.name)

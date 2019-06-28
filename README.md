@@ -20,12 +20,12 @@ This terraform module creates an ec2 instance. It supports the following configu
 |------|-------------|:----:|:-----:|:-----:|
 | ami\_id | The ami id | `string` | `""` | no |
 | ami\_name | the ami name | `string` | `"ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server*"` | no |
-| ami\_owners | the ami owner. defaults to aws marketplace owner id | `list(string)` | `["679593333241"]` | no |
-| associate\_public\_ip\_address | Associate public ip address when subnet_id is attached to an igw | `string` | `"true"` | no |
-| count\_instances | the number of instances | `string` | `"1"` | no |
-| disable\_api\_termination | protect from accidental ec2 instance termination | `string` | `"false"` | no |
+| ami\_owners | the ami owner. defaults to the aws marketplace owner id | `list(string)` | `["679593333241"]` | no |
+| associate\_public\_ip\_address | Associate public ip address when subnet_id is attached to an igw | `bool` | `true` | no |
+| count\_instances | the number of instances | `bool` | `"1"` | no |
+| disable\_api\_termination | protect from accidental ec2 instance termination | `bool` | `false` | no |
 | iam\_instance\_profile | the ec2 instance profile | `string` | `""` | no |
-| instance\_auto\_recovery\_enabled | enable instance recovery cloudwatch alarm | `string` | `"0"` | no |
+| instance\_auto\_recovery\_enabled | enable instance recovery cloudwatch alarm | `bool` | `false` | no |
 | instance\_type | the aws instance type | `string` | `"t2.medium"` | no |
 | key\_name | assign a keypair to the ec2 instance. Overrides the default keypair name when var.key_public_key_material and var.key_name are set | `string` | `""` | no |
 | key\_public\_key\_material | Import ssh public key to an aws keypair. Keypair name defaults to var.name | `string` | `""` | no |
