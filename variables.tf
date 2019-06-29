@@ -110,3 +110,27 @@ variable "user_data_base64" {
   type = string
   default = ""
 }
+
+variable "provisioner_cmdstr" {
+  description = "An optional local-exec provisioner cmd string"
+  type = string
+  default = ""
+}
+
+variable "provisioner_ssh_user" {
+  description = ""
+  type = string
+  default = ""
+}
+
+variable "provisioner_ssh_key_path" {
+  description = ""
+  type = string
+  default = ""
+}
+
+variable "provisioner_ssh_public_ip" {
+  description = "use the instance public ip address for remote-exec provisioner"
+  type = bool
+  default = false
+}

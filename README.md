@@ -3,11 +3,14 @@ This terraform module creates an ec2 instance. It supports the following configu
 
 * n number of aws ec2 instances
 * optionally creates an ec2 keypair
-* optionally creates ec2 instance auto recovery cloudwatch configuration
-* accepts cloud-init gzip+base64 userdata
-* accepts cloud-init plain text userdata
+* optionally creates ec2 instance auto recovery cloudwatch alarm
+* optional cloud-init gzip+base64 userdata input
+* optional cloud-init plain text userdata input
+* push provisioning is supported via local exec provisioner
+* push provisioning supports node targeting from local-exec provisioner. instance context attributes are exposed as local-exec environment variables.
 * toggle api termination protection
-* accepts a map of tags
+* applies a map of tags to all taggable resources
+
 
 ## Terraform version
 
@@ -21,13 +24,13 @@ This terraform module creates an ec2 instance. It supports the following configu
 | ami\_id | The ami id | `string` | `""` | no |
 | ami\_name | the ami name | `string` | `"ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server*"` | no |
 | ami\_owners | the ami owner. defaults to the aws marketplace owner id | `list(string)` | `["679593333241"]` | no |
-| associate\_public\_ip\_address | Associate public ip address when subnet_id is attached to an igw | `bool` | `true` | no |
+| associate\_public\_ip\_address | Associate public ip address when `subnet_id` is attached to an igw | `bool` | `true` | no |
 | count\_instances | the number of instances | `bool` | `"1"` | no |
 | disable\_api\_termination | protect from accidental ec2 instance termination | `bool` | `false` | no |
 | iam\_instance\_profile | the ec2 instance profile | `string` | `""` | no |
 | instance\_auto\_recovery\_enabled | enable instance recovery cloudwatch alarm | `bool` | `false` | no |
 | instance\_type | the aws instance type | `string` | `"t2.medium"` | no |
-| key\_name | assign a keypair to the ec2 instance. Overrides the default keypair name when var.key_public_key_material and var.key_name are set | `string` | `""` | no |
+| key\_name | assign a keypair to the ec2 instance. Overrides the default keypair name when `var.key_public_key_material` and `var.key_name` are set | `string` | `""` | no |
 | key\_public\_key\_material | Import ssh public key to an aws keypair. Keypair name defaults to var.name | `string` | `""` | no |
 | name | the resources name | `string` | n/a | yes |
 | root\_block\_device | customize the root block device configuration | `list(map(string))` | `[]` | no |
@@ -37,6 +40,10 @@ This terraform module creates an ec2 instance. It supports the following configu
 | tags | provide a map of aws tags | `map(string)` | `{}` | no |
 | user\_data | base64 encoded binary data. use when userdata is base64 encoded gzip data | `string` | `""` | no |
 | user\_data\_base64 | base64 encoded binary data. use when userdata is base64 encoded gzip data | `string` | `""` | no |
+| provisioner\_cmdstr | A local-exec provisioner command | `string` | `""` | no |
+| provisioner\_ssh\_user | provisioner ssh user | `string` | `""` | Required when `provisioner_cmdstr` is set |
+| provisioner\_ssh\_key\_path | the provisioner ssh key path. | `string` | `""` | no |
+| provisioner\_ssh\_public\_ip | set the provisioner ssh host to the instance public ip | `bool` | `false` | no |
 
 ## Outputs
 

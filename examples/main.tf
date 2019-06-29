@@ -58,7 +58,7 @@ module "sg" {
   vpc_id                        = var.vpc_id
 }
 
-module "instance_empty" {
+module "instance_none" {
   source = "../"
   count_instances             = 0
   ami_name                    = var.ami_name
@@ -70,6 +70,20 @@ module "instance_empty" {
   subnet_ids                  = var.subnets
   tags                        = var.tags
   user_data                   = var.input_user_data
+}
+
+# validates the default aws_instance resource
+module "instance_no_userdata" {
+  source = "../"
+  count_instances             = 1
+  ami_name                    = var.ami_name
+  associate_public_ip_address = false
+  instance_type               = "t2.nano"
+  key_name                    = var.key_name
+  name                        = var.name
+  security_group_attachments  = [module.sg.security_group_id]
+  subnet_ids                  = var.subnets
+  tags                        = var.tags
 }
 
 module "instance" {
@@ -140,7 +154,31 @@ module "instance_autorecovery_custom_root_device" {
   instance_auto_recovery_enabled = true
 }
 
-module "instance_userdata_base64_empty" {
+
+# validate userdata with provisioner
+module "instance_autorecovery_custom_root_device_provisioner" {
+  source = "../"
+  count_instances                = 2
+  ami_name                       = var.ami_name
+  associate_public_ip_address    = false
+  instance_type                  = "t2.nano"
+  key_name                       = var.key_name
+  name                           = format("%s-autorecovery-custom-root", var.name)
+  security_group_attachments     = [module.sg.security_group_id]
+  subnet_ids                     = var.subnets
+  tags                           = var.tags
+  user_data                      = module.userdata_docker.cloudinit_userdata
+  root_block_device = [{
+   delete_on_termination = "true"
+   volume_type           = "gp2"
+   volume_size           = 100
+  }]
+  instance_auto_recovery_enabled = true
+  provisioner_cmdstr             = "echo $AWS_INSTANCE_ID"
+  provisioner_ssh_user           = "centos"
+}
+
+module "instance_userdata_base64_none" {
   source = "../"
   count_instances             = 0
   ami_name                    = var.ami_name
@@ -224,21 +262,45 @@ module "instance_userdata_base64_autorecovery_custom_root_device" {
   instance_auto_recovery_enabled = true
 }
 
+# validate userdata_base64 with provisioner
+module "instance_userdata_base64_autorecovery_custom_root_device_provisioner" {
+  source = "../"
+  count_instances                = 2
+  ami_name                       = var.ami_name
+  associate_public_ip_address    = false
+  instance_type                  = "t2.nano"
+  key_name                       = var.key_name
+  name                           = format("%s-autorecovery-custom-root", var.name)
+  security_group_attachments     = [module.sg.security_group_id]
+  subnet_ids                     = var.subnets
+  tags                           = var.tags
+  user_data_base64               = base64gzip(var.input_user_data)
+  root_block_device = [{
+   delete_on_termination = "true"
+   volume_type           = "gp2"
+   volume_size           = 100
+  }]
+  instance_auto_recovery_enabled = true
+  provisioner_cmdstr             = "echo $AWS_INSTANCE_ID"
+  provisioner_ssh_user           = "centos"
+}
+
 
 # outputs
 # instance ids
 output "aws_instance_ids" {
   value = concat(
-    module.instance_empty.aws_instance_ids,
+    module.instance_no_userdata.aws_instance_ids,
     module.instance.aws_instance_ids,
     module.instance_autorecovery.aws_instance_ids,
     module.instance_custom_root_device.aws_instance_ids,
     module.instance_autorecovery_custom_root_device.aws_instance_ids,
-    module.instance_userdata_base64_empty.aws_instance_ids,
+    module.instance_autorecovery_custom_root_device_provisioner.aws_instance_ids,
     module.instance_userdata_base64.aws_instance_ids,
     module.instance_userdata_base64_autorecovery.aws_instance_ids,
     module.instance_userdata_base64_custom_root_device.aws_instance_ids,
-    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_ids
+    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_ids,
+    module.instance_userdata_base64_autorecovery_custom_root_device_provisioner.aws_instance_ids
   )
 }
 
@@ -246,48 +308,51 @@ output "aws_instance_ids" {
 # private ips
 output "aws_instance_private_ips" {
   value = concat(
-    module.instance_empty.aws_instance_private_ips,
+    module.instance_no_userdata.aws_instance_private_ips,
     module.instance.aws_instance_private_ips,
     module.instance_autorecovery.aws_instance_private_ips,
     module.instance_custom_root_device.aws_instance_private_ips,
     module.instance_autorecovery_custom_root_device.aws_instance_private_ips,
-    module.instance_userdata_base64_empty.aws_instance_private_ips,
+    module.instance_autorecovery_custom_root_device_provisioner.aws_instance_private_ips,
     module.instance_userdata_base64.aws_instance_private_ips,
     module.instance_userdata_base64_autorecovery.aws_instance_private_ips,
     module.instance_userdata_base64_custom_root_device.aws_instance_private_ips,
-    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_private_ips
+    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_private_ips,
+    module.instance_userdata_base64_autorecovery_custom_root_device_provisioner.aws_instance_private_ips
   )
 }
 
 # private dns
 output "aws_instance_private_dns" {
   value = concat(
-    module.instance_empty.aws_instance_private_dns,
+    module.instance_no_userdata.aws_instance_private_dns,
     module.instance.aws_instance_private_dns,
     module.instance_autorecovery.aws_instance_private_dns,
     module.instance_custom_root_device.aws_instance_private_dns,
     module.instance_autorecovery_custom_root_device.aws_instance_private_dns,
-    module.instance_userdata_base64_empty.aws_instance_private_dns,
+    module.instance_autorecovery_custom_root_device_provisioner.aws_instance_private_dns,
     module.instance_userdata_base64.aws_instance_private_dns,
     module.instance_userdata_base64_autorecovery.aws_instance_private_dns,
     module.instance_userdata_base64_custom_root_device.aws_instance_private_dns,
-    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_private_dns
+    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_private_dns,
+    module.instance_userdata_base64_autorecovery_custom_root_device_provisioner.aws_instance_private_dns
   )
 }
 
 # public ips
 output "aws_public_ips" {
   value = concat(
-    module.instance_empty.aws_instance_public_ips,
+    module.instance_no_userdata.aws_instance_public_ips,
     module.instance.aws_instance_public_ips,
     module.instance_autorecovery.aws_instance_public_ips,
     module.instance_custom_root_device.aws_instance_public_ips,
     module.instance_autorecovery_custom_root_device.aws_instance_public_ips,
-    module.instance_userdata_base64_empty.aws_instance_public_ips,
+    module.instance_autorecovery_custom_root_device_provisioner.aws_instance_public_ips,
     module.instance_userdata_base64.aws_instance_public_ips,
     module.instance_userdata_base64_autorecovery.aws_instance_public_ips,
     module.instance_userdata_base64_custom_root_device.aws_instance_public_ips,
-    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_public_ips
+    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_public_ips,
+    module.instance_userdata_base64_autorecovery_custom_root_device_provisioner.aws_instance_public_ips
   )
 }
 
@@ -295,12 +360,11 @@ output "aws_public_ips" {
 # public dns
 output "aws_public_dns" {
   value = concat(
-    module.instance_empty.aws_instance_public_dns,
+    module.instance_no_userdata.aws_instance_public_dns,
     module.instance.aws_instance_public_dns,
     module.instance_autorecovery.aws_instance_public_dns,
     module.instance_custom_root_device.aws_instance_public_dns,
     module.instance_autorecovery_custom_root_device.aws_instance_public_dns,
-    module.instance_userdata_base64_empty.aws_instance_public_dns,
     module.instance_userdata_base64.aws_instance_public_dns,
     module.instance_userdata_base64_autorecovery.aws_instance_public_dns,
     module.instance_userdata_base64_custom_root_device.aws_instance_public_dns,
