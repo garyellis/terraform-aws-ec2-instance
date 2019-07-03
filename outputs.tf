@@ -53,3 +53,14 @@ output "aws_instance_public_dns" {
       i
   ]
 }
+
+output "aws_instances" {
+  value = [
+    for i in concat(
+        aws_instance.with_user_data[*],
+        aws_instance.with_user_data_base64[*],
+        aws_instance.with_user_data_and_provisioner[*],
+        aws_instance.with_user_data_base64_and_provisioner[*]):
+      { "instance_id" = i.id, "private_dns" = i.private_dns, "private_ip" = i.private_ip, "public_dns" = i.public_dns, "public_ip" = i.public_ip }
+  ]
+}

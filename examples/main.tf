@@ -371,3 +371,18 @@ output "aws_public_dns" {
     module.instance_userdata_base64_autorecovery_custom_root_device.aws_instance_public_dns,
   )
 }
+
+# aws instance list of objects
+output "aws_instances" {
+  value = concat(
+    module.instance_no_userdata.aws_instances,
+    module.instance.aws_instances,
+    module.instance_autorecovery.aws_instances,
+    module.instance_custom_root_device.aws_instances,
+    module.instance_autorecovery_custom_root_device.aws_instances,
+    module.instance_userdata_base64.aws_instances,
+    module.instance_userdata_base64_autorecovery.aws_instances,
+    module.instance_userdata_base64_custom_root_device.aws_instances,
+    module.instance_userdata_base64_autorecovery_custom_root_device.aws_instances,
+  )
+}
