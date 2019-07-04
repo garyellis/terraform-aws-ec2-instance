@@ -33,7 +33,7 @@ resource "aws_instance" "with_user_data" {
   instance_type               = var.instance_type
   key_name                    = local.key_pair_name
   source_dest_check           = var.source_dest_check
-  subnet_id                   = var.subnet_ids[count.index]
+  subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
 
   dynamic "root_block_device" {
@@ -100,7 +100,7 @@ resource "aws_instance" "with_user_data_and_provisioner" {
   instance_type               = var.instance_type
   key_name                    = local.key_pair_name
   source_dest_check           = var.source_dest_check
-  subnet_id                   = var.subnet_ids[count.index]
+  subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
 
   dynamic "root_block_device" {
@@ -157,7 +157,7 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
   instance_type               = var.instance_type
   key_name                    = local.key_pair_name
   source_dest_check           = var.source_dest_check
-  subnet_id                   = var.subnet_ids[count.index]
+  subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
 
   dynamic "root_block_device" {
