@@ -75,6 +75,12 @@ variable "root_block_device" {
   default = []
 }
 
+variable "ebs_block_device" {
+  description = "additional ebs volumes to attach to the instance"
+  type = list(map(string))
+  default = []
+}
+
 variable "security_group_attachments" {
   description = "a list of security group ids that will attach to rancher server"
   type = list(string)
