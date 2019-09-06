@@ -100,6 +100,23 @@ resource "aws_instance" "with_user_data_base64" {
     }
   }
 
+  dynamic "ebs_block_device" {
+    for_each = [for i in var.ebs_block_device: {
+      delete_on_termination = lookup(i, "delete_on_termination", "true")
+      device_name           = i.device_name
+      volume_type           = lookup(i, "volume_type", "gp2")
+      volume_size           = i.volume_size
+      encrypted             = lookup(i, "encrypted", "false")
+    }]
+
+    content {
+      delete_on_termination = ebs_block_device.value.delete_on_termination
+      device_name           = ebs_block_device.value.device_name
+      volume_type           = ebs_block_device.value.volume_type
+      volume_size           = ebs_block_device.value.volume_size
+    }
+  }
+
   user_data_base64            = var.user_data_base64
   tags                        = merge(map("Name", var.name), var.tags)
   volume_tags                 = merge(map("Name", var.name), var.tags)
@@ -131,6 +148,23 @@ resource "aws_instance" "with_user_data_and_provisioner" {
       delete_on_termination = root_block_device.value.delete_on_termination
       volume_type           = root_block_device.value.volume_type
       volume_size           = root_block_device.value.volume_size
+    }
+  }
+
+  dynamic "ebs_block_device" {
+    for_each = [for i in var.ebs_block_device: {
+      delete_on_termination = lookup(i, "delete_on_termination", "true")
+      device_name           = i.device_name
+      volume_type           = lookup(i, "volume_type", "gp2")
+      volume_size           = i.volume_size
+      encrypted             = lookup(i, "encrypted", "false")
+    }]
+
+    content {
+      delete_on_termination = ebs_block_device.value.delete_on_termination
+      device_name           = ebs_block_device.value.device_name
+      volume_type           = ebs_block_device.value.volume_type
+      volume_size           = ebs_block_device.value.volume_size
     }
   }
 
@@ -188,6 +222,23 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
       delete_on_termination = root_block_device.value.delete_on_termination
       volume_type           = root_block_device.value.volume_type
       volume_size           = root_block_device.value.volume_size
+    }
+  }
+
+  dynamic "ebs_block_device" {
+    for_each = [for i in var.ebs_block_device: {
+      delete_on_termination = lookup(i, "delete_on_termination", "true")
+      device_name           = i.device_name
+      volume_type           = lookup(i, "volume_type", "gp2")
+      volume_size           = i.volume_size
+      encrypted             = lookup(i, "encrypted", "false")
+    }]
+
+    content {
+      delete_on_termination = ebs_block_device.value.delete_on_termination
+      device_name           = ebs_block_device.value.device_name
+      volume_type           = ebs_block_device.value.volume_type
+      volume_size           = ebs_block_device.value.volume_size
     }
   }
 
