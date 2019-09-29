@@ -1,3 +1,10 @@
+
+variable "use_ami_datasource" {
+  description = "use an ami datasource to lookup ami id"
+  type = bool
+  default = false
+}
+
 variable "ami_id" {
   description = "The ami id"
   type = string
