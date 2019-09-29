@@ -1,6 +1,8 @@
 data "aws_region" "region" {}
 
 data "aws_ami" "ami" {
+  count = var.use_ami_datasource ? 1 : 0
+
   most_recent = true
   owners = var.ami_owners
   filter {
@@ -18,6 +20,7 @@ resource "aws_key_pair" "key_pair" {
 
 
 locals {
+  ami_id = var.ami_id == "" ? join("",  data.aws_ami.ami.*.id) : var.ami_id
   key_pair_name =  var.key_public_key_material != "" ? join(",", aws_key_pair.key_pair.*.key_name) : var.key_name
 }
 
@@ -26,7 +29,7 @@ locals {
 resource "aws_instance" "with_user_data" {
   count = length(var.user_data_base64) == 0 && length(var.provisioner_cmdstr) == 0 ? var.count_instances : 0
 
-  ami                         = var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id
+  ami                         = local.ami_id
   associate_public_ip_address = var.associate_public_ip_address
   disable_api_termination     = var.disable_api_termination
   iam_instance_profile        = var.iam_instance_profile
@@ -76,7 +79,7 @@ resource "aws_instance" "with_user_data" {
 resource "aws_instance" "with_user_data_base64" {
   count = length(var.user_data) == 0 && length(var.user_data_base64) > 0 && length(var.provisioner_cmdstr) == 0 ? var.count_instances : 0
 
-  ami                         = var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id
+  ami                         = local.ami_id
   associate_public_ip_address = var.associate_public_ip_address
   disable_api_termination     = var.disable_api_termination
   iam_instance_profile        = var.iam_instance_profile
@@ -127,7 +130,7 @@ resource "aws_instance" "with_user_data_base64" {
 resource "aws_instance" "with_user_data_and_provisioner" {
   count = length(var.user_data_base64) == 0 && length(var.provisioner_cmdstr) > 0 ? var.count_instances : 0
 
-  ami                         = var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id
+  ami                         = local.ami_id
   associate_public_ip_address = var.associate_public_ip_address
   disable_api_termination     = var.disable_api_termination
   iam_instance_profile        = var.iam_instance_profile
@@ -201,7 +204,7 @@ resource "aws_instance" "with_user_data_and_provisioner" {
 resource "aws_instance" "with_user_data_base64_and_provisioner" {
   count = length(var.user_data) == 0 && length(var.user_data_base64) > 0 && length(var.provisioner_cmdstr) > 0 ? var.count_instances : 0
 
-  ami                         = var.ami_id == "" ? data.aws_ami.ami.id : var.ami_id
+  ami                         = local.ami_id
   associate_public_ip_address = var.associate_public_ip_address
   disable_api_termination     = var.disable_api_termination
   iam_instance_profile        = var.iam_instance_profile
