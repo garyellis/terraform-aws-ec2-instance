@@ -38,6 +38,7 @@ resource "aws_instance" "with_user_data" {
   source_dest_check           = var.source_dest_check
   subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
+  private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
     for_each = [for i in var.root_block_device: {
@@ -88,6 +89,7 @@ resource "aws_instance" "with_user_data_base64" {
   source_dest_check           = var.source_dest_check
   subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
+  private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
     for_each = [for i in var.root_block_device: {
@@ -139,6 +141,7 @@ resource "aws_instance" "with_user_data_and_provisioner" {
   source_dest_check           = var.source_dest_check
   subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
+  private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
     for_each = [for i in var.root_block_device: {
@@ -213,6 +216,7 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
   source_dest_check           = var.source_dest_check
   subnet_id                   = element(var.subnet_ids, count.index)
   vpc_security_group_ids      = var.security_group_attachments
+  private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
     for_each = [for i in var.root_block_device: {

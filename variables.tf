@@ -76,6 +76,18 @@ variable "name" {
   type = string
 }
 
+variable "private_ip" {
+  description = "Private IP address to associate with the instance in a VPC"
+  type        = string
+  default     = ""
+}
+
+variable "private_ips" {
+  description = "A list of private IPs associated to the EC2 instance. This length should be the instances count"
+  type        = list(string)
+  default     = []
+}
+
 variable "root_block_device" {
   description = "customize the root block device configuration"
   type = list(map(string))
