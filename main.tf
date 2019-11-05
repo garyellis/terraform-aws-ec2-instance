@@ -41,16 +41,14 @@ resource "aws_instance" "with_user_data" {
   private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
-    for_each = [for i in var.root_block_device: {
-      delete_on_termination = i.delete_on_termination
-      volume_type           = i.volume_type
-      volume_size           = i.volume_size
-    }]
-
+    for_each = var.root_block_device
     content {
-      delete_on_termination = root_block_device.value.delete_on_termination
-      volume_type           = root_block_device.value.volume_type
-      volume_size           = root_block_device.value.volume_size
+      delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      iops                  = lookup(root_block_device.value, "iops", null)
+      kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
     }
   }
 
@@ -92,16 +90,14 @@ resource "aws_instance" "with_user_data_base64" {
   private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
-    for_each = [for i in var.root_block_device: {
-      delete_on_termination = i.delete_on_termination
-      volume_type           = i.volume_type
-      volume_size           = i.volume_size
-    }]
-
+    for_each = var.root_block_device
     content {
-      delete_on_termination = root_block_device.value.delete_on_termination
-      volume_type           = root_block_device.value.volume_type
-      volume_size           = root_block_device.value.volume_size
+      delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      iops                  = lookup(root_block_device.value, "iops", null)
+      kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
     }
   }
 
@@ -144,16 +140,14 @@ resource "aws_instance" "with_user_data_and_provisioner" {
   private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
-    for_each = [for i in var.root_block_device: {
-      delete_on_termination = i.delete_on_termination
-      volume_type           = i.volume_type
-      volume_size           = i.volume_size
-    }]
-
+    for_each = var.root_block_device
     content {
-      delete_on_termination = root_block_device.value.delete_on_termination
-      volume_type           = root_block_device.value.volume_type
-      volume_size           = root_block_device.value.volume_size
+      delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      iops                  = lookup(root_block_device.value, "iops", null)
+      kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
     }
   }
 
@@ -219,16 +213,14 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
   private_ip                  = length(var.private_ips) > 0 ? element(var.private_ips, count.index) : var.private_ip
 
   dynamic "root_block_device" {
-    for_each = [for i in var.root_block_device: {
-      delete_on_termination = i.delete_on_termination
-      volume_type           = i.volume_type
-      volume_size           = i.volume_size
-    }]
-
+    for_each = var.root_block_device
     content {
-      delete_on_termination = root_block_device.value.delete_on_termination
-      volume_type           = root_block_device.value.volume_type
-      volume_size           = root_block_device.value.volume_size
+      delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      iops                  = lookup(root_block_device.value, "iops", null)
+      kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
     }
   }
 
