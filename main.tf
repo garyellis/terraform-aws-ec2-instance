@@ -72,6 +72,10 @@ resource "aws_instance" "with_user_data" {
   user_data                   = var.user_data
   tags                        = merge(map("Name", var.name), var.tags)
   volume_tags                 = merge(map("Name", var.name), var.tags)
+
+  lifecycle {
+    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+  }
 }
 
 
@@ -121,6 +125,10 @@ resource "aws_instance" "with_user_data_base64" {
   user_data_base64            = var.user_data_base64
   tags                        = merge(map("Name", var.name), var.tags)
   volume_tags                 = merge(map("Name", var.name), var.tags)
+
+  lifecycle {
+    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+  }
 }
 
 
@@ -171,6 +179,10 @@ resource "aws_instance" "with_user_data_and_provisioner" {
   user_data                   = var.user_data
   tags                        = merge(map("Name", var.name), var.tags)
   volume_tags                 = merge(map("Name", var.name), var.tags)
+
+  lifecycle {
+    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+  }
 
   # remote-exec validates ssh is running before running additional provisioners
   provisioner "remote-exec" {
@@ -244,6 +256,10 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
   user_data_base64            = var.user_data_base64
   tags                        = merge(map("Name", var.name), var.tags)
   volume_tags                 = merge(map("Name", var.name), var.tags)
+
+  lifecycle {
+    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+  }
 
   # remote-exec validates ssh is running before running additional provisioners
   provisioner "remote-exec" {
