@@ -74,7 +74,13 @@ resource "aws_instance" "with_user_data" {
   volume_tags                 = merge(map("Name", var.name), var.tags)
 
   lifecycle {
-    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+    ignore_changes            = [
+      "volume_tags.%s",
+      volume_tags["Name"],
+      volume_tags["kubernetes.io/created-for/pv/name"],
+      volume_tags["kubernetes.io/created-for/pvc/name"],
+      volume_tags["kubernetes.io/created-for/pvc/namespace"]
+    ]
   }
 }
 
@@ -127,7 +133,13 @@ resource "aws_instance" "with_user_data_base64" {
   volume_tags                 = merge(map("Name", var.name), var.tags)
 
   lifecycle {
-    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+    ignore_changes            = [
+      "volume_tags.%s",
+      volume_tags["Name"],
+      volume_tags["kubernetes.io/created-for/pv/name"],
+      volume_tags["kubernetes.io/created-for/pvc/name"],
+      volume_tags["kubernetes.io/created-for/pvc/namespace"]
+    ]
   }
 }
 
@@ -181,7 +193,13 @@ resource "aws_instance" "with_user_data_and_provisioner" {
   volume_tags                 = merge(map("Name", var.name), var.tags)
 
   lifecycle {
-    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+    ignore_changes            = [
+      "volume_tags.%s",
+      volume_tags["Name"],
+      volume_tags["kubernetes.io/created-for/pv/name"],
+      volume_tags["kubernetes.io/created-for/pvc/name"],
+      volume_tags["kubernetes.io/created-for/pvc/namespace"]
+    ]
   }
 
   # remote-exec validates ssh is running before running additional provisioners
@@ -258,7 +276,13 @@ resource "aws_instance" "with_user_data_base64_and_provisioner" {
   volume_tags                 = merge(map("Name", var.name), var.tags)
 
   lifecycle {
-    ignore_changes            = [tags["kubernetes.io/*"] volume_tags["kubernetes.io/*"]]
+    ignore_changes            = [
+      "volume_tags.%s",
+      volume_tags["Name"],
+      volume_tags["kubernetes.io/created-for/pv/name"],
+      volume_tags["kubernetes.io/created-for/pvc/name"],
+      volume_tags["kubernetes.io/created-for/pvc/namespace"]
+    ]
   }
 
   # remote-exec validates ssh is running before running additional provisioners
