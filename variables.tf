@@ -76,6 +76,12 @@ variable "name" {
   type = string
 }
 
+variable "add_num_suffix" {
+  description = "adds the counter index as a suffix to the instance Name tag"
+  type        = bool
+  default     = true
+}
+
 variable "private_ip" {
   description = "Private IP address to associate with the instance in a VPC"
   type        = string
@@ -127,13 +133,13 @@ variable "tags" {
 variable "user_data" {
   description = "base64 encoded binary data. use when userdata is base64 encoded gzip data"
   type = string
-  default = ""
+  default = null
 }
 
 variable "user_data_base64" {
   description = "base64 encoded binary data. use when userdata is base64 encoded gzip data"
   type = string
-  default = ""
+  default = null
 }
 
 variable "provisioner_cmdstr" {
