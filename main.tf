@@ -4,24 +4,24 @@ data "aws_ami" "ami" {
   count = var.use_ami_datasource ? 1 : 0
 
   most_recent = true
-  owners = var.ami_owners
+  owners      = var.ami_owners
   filter {
-    name = "name"
+    name   = "name"
     values = [var.ami_name]
   }
 }
 
 # optionally create keypair
 resource "aws_key_pair" "key_pair" {
-  count                   = var.key_public_key_material != "" ? 1 : 0
-  key_name                = var.key_name != "" ? var.key_name : var.name
-  public_key              = var.key_public_key_material
+  count      = var.key_public_key_material != "" ? 1 : 0
+  key_name   = var.key_name != "" ? var.key_name : var.name
+  public_key = var.key_public_key_material
 }
 
 
 locals {
-  ami_id = var.ami_id == "" ? join("",  data.aws_ami.ami.*.id) : var.ami_id
-  key_pair_name =  var.key_public_key_material != "" ? join(",", aws_key_pair.key_pair.*.key_name) : var.key_name
+  ami_id        = var.ami_id == "" ? join("", data.aws_ami.ami.*.id) : var.ami_id
+  key_pair_name = var.key_public_key_material != "" ? join(",", aws_key_pair.key_pair.*.key_name) : var.key_name
 }
 
 resource "aws_instance" "instance" {
@@ -64,16 +64,34 @@ resource "aws_instance" "instance" {
     }
   }
 
-  user_data                   = var.user_data
-  user_data_base64            = var.user_data_base64
-  tags                        = merge(
+  dynamic "ephemeral_block_device" {
+    for_each = var.ephemeral_block_device
+    content {
+      device_name  = ephemeral_block_device.value.device_name
+      no_device    = lookup(ephemeral_block_device.value, "no_device", null)
+      virtual_name = lookup(ephemeral_block_device.value, "virtual_name", null)
+    }
+  }
+
+  dynamic "network_interface" {
+    for_each = var.network_interface
+    content {
+      device_index          = network_interface.value.device_index
+      network_interface_id  = lookup(network_interface.value, "network_interface_id", null)
+      delete_on_termination = lookup(network_interface.value, "delete_on_termination", false)
+    }
+  }
+
+  user_data        = var.user_data
+  user_data_base64 = var.user_data_base64
+  tags = merge(
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
     var.tags
   )
 
-  volume_tags                 = merge(
+  volume_tags = merge(
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
@@ -81,7 +99,7 @@ resource "aws_instance" "instance" {
   )
 
   lifecycle {
-    ignore_changes            = [
+    ignore_changes = [
       volume_tags["kubernetes.io/created-for/pv/name"],
       volume_tags["kubernetes.io/created-for/pvc/name"],
       volume_tags["kubernetes.io/created-for/pvc/namespace"]
@@ -130,17 +148,34 @@ resource "aws_instance" "instance_and_provisioner" {
     }
   }
 
+  dynamic "ephemeral_block_device" {
+    for_each = var.ephemeral_block_device
+    content {
+      device_name  = ephemeral_block_device.value.device_name
+      no_device    = lookup(ephemeral_block_device.value, "no_device", null)
+      virtual_name = lookup(ephemeral_block_device.value, "virtual_name", null)
+    }
+  }
 
-  user_data                   = var.user_data
-  user_data_base64            = var.user_data_base64
-  tags                        = merge(
+  dynamic "network_interface" {
+    for_each = var.network_interface
+    content {
+      device_index          = network_interface.value.device_index
+      network_interface_id  = lookup(network_interface.value, "network_interface_id", null)
+      delete_on_termination = lookup(network_interface.value, "delete_on_termination", false)
+    }
+  }
+
+  user_data        = var.user_data
+  user_data_base64 = var.user_data_base64
+  tags = merge(
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
     var.tags
   )
 
-  volume_tags                 = merge(
+  volume_tags = merge(
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
@@ -148,7 +183,7 @@ resource "aws_instance" "instance_and_provisioner" {
   )
 
   lifecycle {
-    ignore_changes            = [
+    ignore_changes = [
       volume_tags["kubernetes.io/created-for/pv/name"],
       volume_tags["kubernetes.io/created-for/pvc/name"],
       volume_tags["kubernetes.io/created-for/pvc/namespace"]
@@ -158,9 +193,9 @@ resource "aws_instance" "instance_and_provisioner" {
   # remote-exec validates ssh is running before running additional provisioners
   provisioner "remote-exec" {
     connection {
-      type = "ssh"
-      host = !var.provisioner_ssh_public_ip ? self.private_ip : self.public_ip
-      user = var.provisioner_ssh_user
+      type        = "ssh"
+      host        = ! var.provisioner_ssh_public_ip ? self.private_ip : self.public_ip
+      user        = var.provisioner_ssh_user
       private_key = length(var.provisioner_ssh_key_path) > 0 ? file(var.provisioner_ssh_key_path) : ""
     }
 
@@ -172,11 +207,11 @@ resource "aws_instance" "instance_and_provisioner" {
   provisioner "local-exec" {
     command = var.provisioner_cmdstr
     environment = {
-      AWS_INSTANCE_ID           = self.id
-      AWS_INSTANCE_PRIVATE_IP   = self.private_ip
-      AWS_INSTANCE_PRIVATE_DNS  = self.private_dns
-      AWS_INSTANCE_PUBLIC_IP    = self.public_ip  
-      AWS_INSTANCE_PUBLIC_DNS   = self.public_dns
+      AWS_INSTANCE_ID          = self.id
+      AWS_INSTANCE_PRIVATE_IP  = self.private_ip
+      AWS_INSTANCE_PRIVATE_DNS = self.private_dns
+      AWS_INSTANCE_PUBLIC_IP   = self.public_ip
+      AWS_INSTANCE_PUBLIC_DNS  = self.public_dns
     }
   }
 }
@@ -186,24 +221,24 @@ locals {
   aws_instance_ids = [
     for i in compact(concat(
       aws_instance.instance.*.id,
-      aws_instance.instance_and_provisioner.*.id)):
-        i
+    aws_instance.instance_and_provisioner.*.id)) :
+    i
   ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "instance_auto_recovery" {
-  count                       = var.instance_auto_recovery_enabled ? var.count_instances : 0
+  count = var.instance_auto_recovery_enabled ? var.count_instances : 0
 
-  alarm_name                  = format("autorecover-%s-%s", var.name, element(local.aws_instance_ids, count.index))
-  namespace                   = "AWS/EC2"
-  alarm_description           = "EC2 instance auto recovery"
-  alarm_actions               = [format("arn:aws:automate:%s:ec2:recover",data.aws_region.region.name)]
-  evaluation_periods          = "5"
-  period                      = "60"
-  statistic                   = "Minimum"
-  comparison_operator         = "GreaterThanThreshold"
-  threshold                   = "0"
-  metric_name                 = "StatusCheckFailed_System"
+  alarm_name          = format("autorecover-%s-%s", var.name, element(local.aws_instance_ids, count.index))
+  namespace           = "AWS/EC2"
+  alarm_description   = "EC2 instance auto recovery"
+  alarm_actions       = [format("arn:aws:automate:%s:ec2:recover", data.aws_region.region.name)]
+  evaluation_periods  = "5"
+  period              = "60"
+  statistic           = "Minimum"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "0"
+  metric_name         = "StatusCheckFailed_System"
 
   dimensions = {
     InstanceId = element(local.aws_instance_ids, count.index)
