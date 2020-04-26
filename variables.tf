@@ -141,6 +141,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "volume_tags" {
+  description = "provide a map of aws tags associated to ebs volumes"
+  type        = map(string)
+  default     = {}
+}
+
 
 variable "user_data" {
   description = "base64 encoded binary data. use when userdata is base64 encoded gzip data"

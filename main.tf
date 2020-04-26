@@ -95,7 +95,8 @@ resource "aws_instance" "instance" {
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
-    var.tags
+    var.tags,
+    var.volume_tags
   )
 
   lifecycle {
@@ -179,7 +180,8 @@ resource "aws_instance" "instance_and_provisioner" {
     {
       "Name" = var.count_instances > 1 || var.add_num_suffix ? format("%s-%d", var.name, count.index + 1) : var.name
     },
-    var.tags
+    var.tags,
+    var.volume_tags
   )
 
   lifecycle {
