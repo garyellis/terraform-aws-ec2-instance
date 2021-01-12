@@ -1,4 +1,4 @@
-# tf_module_aws_instance
+# terraform-aws-ec2-instance
 This terraform module creates an ec2 instance. It supports the following configuration:
 
 * n number of aws ec2 instances
